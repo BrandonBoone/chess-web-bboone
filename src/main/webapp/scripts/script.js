@@ -172,12 +172,6 @@
 
 					d.resolve(); 
 
-					console.log('tile moved: ' + JSON.stringify(
-						{
-							from: from.attr('id'),
-							to: to.attr('id')
-						}
-					));
 				});
 			});
 
@@ -262,25 +256,18 @@
 
 		game.tileClicked("#f2")
 		.then(function(){
-			console.log('');
 			return game.tileClicked("#f3");
 		}).then(function(def){
-			 console.log('1');
 			return game.tileClicked("#e7");
 		}).then(function(def){
-			 console.log('2');
 			return game.tileClicked("#e6");
 		}).then(function(def){
-			console.log('3');
 			return game.tileClicked("#g2");
 		}).then(function(def){
-			console.log('4');
 			return game.tileClicked("#g4");
 		}).then(function(def){
-			console.log('5');
 			return game.tileClicked("#d8");
 		}).then(function(def){
-			console.log('6');
 			return game.tileClicked("#h4");
 		}).then(function(){
 			if(!game.isGameOver){
