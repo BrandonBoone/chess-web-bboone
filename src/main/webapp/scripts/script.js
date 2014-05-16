@@ -23,6 +23,14 @@
 
 		};
 
+		this.resetGame = function(){
+			$.ajax({
+				url:'/api/chess',
+				type: 'POST'
+			}).done(function(){
+				_ctx.repaint()
+			});
+		};
 		
 		this.getBoardState = function(template){
 
@@ -108,7 +116,7 @@
 		this.movePiece = function(from, to){
 			
 			//optomistic. Moving the piece before I get sever confirmation. 
-			to.append(from.find('span')); 
+			to.empty().append(from.find('span')); 
 
 			$.ajax({
 				url:'/api/chess/moves',
@@ -120,7 +128,7 @@
 			        destination: to.attr('id')
 			    })
 			}).done(function(data){
-				_ctx.repaint(); //todo:This is overkill... React would make this approach viable. 
+				_ctx.getMoves();
 			}).fail(function(e){
 				console.log(e);
 			})
@@ -167,6 +175,7 @@
 		var myGame = new game(); 
 		myGame.repaint(); 
 
+		$('#reset').click(myGame.resetGame);
 	});
 
 })(jQuery);
