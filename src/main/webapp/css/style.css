@@ -1,0 +1,90 @@
+#board{
+	table-layout: fixed;
+	border-collapse:collapse;
+	text-align: center;
+}
+
+#board td{
+	height:80px;
+	width:80px;
+	padding:0px;
+	margin:0px;
+}
+
+#board tbody td{
+	border:1px solid black;
+}
+
+#board tbody td:nth-child(1), #board td:nth-child(10){
+	border:0px none; 
+}
+
+
+.sel-tile{
+	background-color: #CCC;
+}
+.pos-move{
+	background-color: #0F0;
+}
+
+
+
+.piece {
+	/* src: http://atskaheart.deviantart.com/ */
+	/* 425 X 125 */
+	background: url('../images/chess_pieces_by_atskaheart.png') no-repeat; 
+	width:80px;
+	height:80px;
+	display: block;
+}
+
+.piece.pWhite {
+	background-position: -8px -20px; 
+}
+
+.piece.rWhite {
+	background-position: -70px -15px; 
+}
+
+.piece.nWhite {
+	background-position: -140px -15px; 
+}
+
+.piece.bWhite {
+	background-position: -205px -15px; 
+}
+
+.piece.qWhite {
+	background-position: -270px -15px; 
+}
+
+.piece.kWhite {
+	background-position: -335px -15px; 
+}
+
+
+
+
+.piece.pBlack {
+	background-position: -8px -105px; 
+}
+
+.piece.rBlack {
+	background-position: -70px -100px; 
+}
+
+.piece.nBlack {
+	background-position: -140px -100px; 
+}
+
+.piece.bBlack {
+	background-position: -205px -100px; 
+}
+
+.piece.qBlack {
+	background-position: -270px -100px; 
+}
+
+.piece.kBlack {
+	background-position: -335px -100px; 
+}
