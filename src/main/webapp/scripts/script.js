@@ -12,9 +12,12 @@
 		var _moveList = {},
 			_ctx = this; 
 
+		//Repaints the entire board, fetchs the template (if not already fetched)
+		//As well as the current game state and move list. 
 		this.repaint = function(){
 			
 			//TODO: getMoves should probably be chained as well. 
+			//Not sure yet why chaining results in wrong data being passed to the getBoardState function
 			this.getMoves();
 
 			this.getBoardTemplate().then(this.getBoardState).then(function(html){
@@ -23,6 +26,7 @@
 
 		};
 
+		//Resets the game on the server and issues a repaint. 
 		this.resetGame = function(){
 			$.ajax({
 				url:'/api/chess',
@@ -32,6 +36,7 @@
 			});
 		};
 		
+		//Gets the state of the board and renders it with a passed in template. 
 		this.getBoardState = function(template){
 
 			var d = $.Deferred(); 
@@ -46,6 +51,8 @@
 			return d; 
 		};
 
+		//Gets and compiles the template for the board
+		//Registers various Handlebars templates to assist with rendering. 
 		this.getBoardTemplate = (function(){
 
 			var template = null; 
@@ -89,6 +96,7 @@
 			};
 		})();
 
+		//Gets the current list of moves for the board
 		this.getMoves = function(){
 
 			var d = $.Deferred(); 
@@ -113,6 +121,9 @@
 
 		};
 
+		//Moves a piece from one cell to another
+		//from: jQuery table cell
+		//to: jkQuery table cell
 		this.movePiece = function(from, to){
 			
 			//optomistic. Moving the piece before I get sever confirmation. 
@@ -134,6 +145,7 @@
 			})
 		}
 
+		//Wires up the click events for the board. 
 		function setBoardEvents(){
 			_config.board.on('click', 'td', function(){
 				
@@ -155,6 +167,8 @@
 			});
 		}
 
+		//Generates a select list of possible moves.
+		//Used for painting the available moves for the selected piece. 
 		function genMoveSelector(moves){
 			var selector = "", 
 				i = 0; 
