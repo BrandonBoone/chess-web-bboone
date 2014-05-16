@@ -17,6 +17,7 @@
 
 		var _config = {
 			board : $('#board'),
+			checked: 'checked',
 			posMove: 'pos-move',
 			selTile: 'sel-tile'
 		};
@@ -26,17 +27,27 @@
 
 		//Repaints the entire board, fetchs the template (if not already fetched)
 		//As well as the current game state and move list. 
-		this.repaint = function(){
+		this.render = function(){
 			
 			//TODO: getMoves should probably be chained as well. 
 			//Not sure yet why chaining results in wrong data being passed to the getBoardState function
 			this.getMoves();
 
-			this.getBoardTemplate().then(this.getBoardState).then(function(html){
+			this.getBoardTemplate().then(this.getBoardState).then(this.renderBoardState).then(function(html){
 				_config.board.html(html);
 			});	
 
 		};
+
+		//Renders the board
+		this.renderBoardState = function(data, template){
+			var d = $.Deferred(); 
+			d.resolve(template({
+				pos: data.positionToPieces,
+				letters: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+			}));
+			return d; 
+		}
 
 		//Resets the game on the server and issues a repaint. 
 		this.resetGame = function(){
@@ -44,7 +55,7 @@
 				url:'/api/chess',
 				type: 'POST'
 			}).done(function(){
-				_ctx.repaint()
+				_ctx.render();
 			});
 		};
 		
@@ -55,13 +66,11 @@
 		    $.ajax({
 				url:'/api/chess'
 			}).done(function(data){
-				d.resolve(template({
-					pos: data.positionToPieces,
-					letters: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-				}));
+				d.resolve(data, template);
 			});
 			return d; 
 		};
+
 
 		//Gets and compiles the template for the board
 		//Registers various Handlebars templates to assist with rendering. 
@@ -151,10 +160,29 @@
 			        destination: to.attr('id')
 			    })
 			}).done(function(data){
-				_ctx.getMoves();
-			}).fail(function(e){
-				console.log(e);
-			})
+				_ctx.getMoves().then(_ctx.getBoardState).then(function(data){
+					setChecked(data.inCheck, data.currentPlayer);
+					setGameOver(data.gameOver, data.currentPlayer); 
+				});
+			});
+		}
+
+		function clearChecked(){
+			$('.' + _config.checked).removeClass(_config.checked); 
+		}
+
+		function setChecked(isChecked, player){
+			clearChecked(); 
+
+			if(isChecked){
+				$('.k' + player).parent().addClass(_config.checked)
+			}
+		}
+
+		function setGameOver(isGameOver, player){
+			if(isGameOver){
+				alert((player === "White" ? "Black" : "White" ) + " wins!")
+			}
 		}
 
 		//Wires up the click events for the board. 
@@ -179,6 +207,8 @@
 			});
 		}
 
+
+
 		//Generates a select list of possible moves.
 		//Used for painting the available moves for the selected piece. 
 		function genMoveSelector(moves){
@@ -199,7 +229,7 @@
 
 	$(function(){
 		var myGame = new game(); 
-		myGame.repaint(); 
+		myGame.render(); 
 
 		$('#reset').click(myGame.resetGame);
 	});

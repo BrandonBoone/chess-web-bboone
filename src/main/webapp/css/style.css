@@ -5,10 +5,10 @@
 }
 
 #board td{
-	height:80px;
-	width:80px;
 	padding:0px;
 	margin:0px;
+	height:80px;
+	width:80px;
 }
 
 #board tbody td{
@@ -25,6 +25,10 @@
 }
 .pos-move{
 	background-color: #0F0;
+}
+
+.checked{
+	background-color: #F00; 
 }
 
 
@@ -63,28 +67,69 @@
 }
 
 
-
+.piece.rBlack, .piece.nBlack, .piece.bBlack, .piece.kBlack, .piece.qBlack{
+	background-position-y: -100px;
+}
 
 .piece.pBlack {
 	background-position: -8px -105px; 
 }
 
 .piece.rBlack {
-	background-position: -70px -100px; 
+	background-position-x: -70px ; 
 }
 
 .piece.nBlack {
-	background-position: -140px -100px; 
+	background-position-x: -140px; 
 }
 
 .piece.bBlack {
-	background-position: -205px -100px; 
+	background-position-x: -205px; 
 }
 
 .piece.qBlack {
-	background-position: -270px -100px; 
+	background-position-x: -270px; 
 }
 
 .piece.kBlack {
-	background-position: -335px -100px; 
+	background-position-x: -335px; 
+}
+
+/*iPhone / phone| src: http://stackoverflow.com/a/6370835*/
+
+
+
+
+@media only screen and (min-width: 480px){
+
+	#board td, .piece{
+		height:48px;
+		width:48px;
+	}
+	.piece{
+		background-size : 60% 60%;
+	}
+}
+
+/*tablet*/
+@media only screen and (min-width: 768px){
+
+	#board td, .piece{
+		height:60px;
+		width:60px;
+	}
+	.piece{
+		background-size : 400px 165px;
+	}
+}
+
+/* hi-res laptops and desktops */
+@media only screen and (min-width:1000px) {  
+	#board td, .piece{
+		height:80px;
+		width:80px;
+	}
+	.piece{
+		background-size : 425px 195px;
+	}
 }
