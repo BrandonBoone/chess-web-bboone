@@ -25,6 +25,8 @@
 		var _moveList = {},
 			_ctx = this; 
 
+		this.isGameOver; 
+
 		//Repaints the entire board, fetchs the template (if not already fetched)
 		//As well as the current game state and move list. 
 		this.render = function(){
@@ -136,6 +138,8 @@
 				//TODO: Get rid of this global setter.
 				_moveList = newData; 
 				d.resolve(newData);
+
+				//_ctx.events.trigger('getMovesCompleted', d.promise());
 			}); 
 
 			return d; 
@@ -146,9 +150,11 @@
 		//from: jQuery table cell
 		//to: jkQuery table cell
 		this.movePiece = function(from, to){
-			
+
 			//optomistic. Moving the piece before I get sever confirmation. 
 			to.empty().append(from.find('span')); 
+
+			var d = $.Deferred(); 
 
 			$.ajax({
 				url:'/api/chess/moves',
@@ -163,8 +169,19 @@
 				_ctx.getMoves().then(_ctx.getBoardState).then(function(data){
 					setChecked(data.inCheck, data.currentPlayer);
 					setGameOver(data.gameOver, data.currentPlayer); 
+
+					d.resolve(); 
+
+					console.log('tile moved: ' + JSON.stringify(
+						{
+							from: from.attr('id'),
+							to: to.attr('id')
+						}
+					));
 				});
 			});
+
+			return d; 
 		}
 
 		function clearChecked(){
@@ -180,6 +197,7 @@
 		}
 
 		function setGameOver(isGameOver, player){
+			_ctx.isGameOver = isGameOver; 
 			if(isGameOver){
 				alert((player === "White" ? "Black" : "White" ) + " wins!")
 			}
@@ -188,23 +206,35 @@
 		//Wires up the click events for the board. 
 		function setBoardEvents(){
 			_config.board.on('click', 'td', function(){
-				
-				var ele = $(this); 
-				var moves = _moveList[ele.attr('id')];
-
-				if(ele.hasClass(_config.posMove)){
-					_ctx.movePiece($('.' + _config.selTile), ele)
-				}
-
-				$('.' + _config.posMove).removeClass(_config.posMove);
-				$('.' + _config.selTile).removeClass(_config.selTile);
-
-				ele.addClass(_config.selTile);
-
-				if(moves){
-					$(genMoveSelector(moves)).addClass(_config.posMove);
-				}
+				_ctx.tileClicked(this);
 			});
+		}
+
+		this.tileClicked = function(ele){
+			ele = $(ele); 
+
+			var d = $.Deferred(); 
+
+			var moves = _moveList[ele.attr('id')];
+
+			if(ele.hasClass(_config.posMove)){
+				_ctx.movePiece($('.' + _config.selTile), ele).done(function(){
+
+					d.resolve(); 
+				})
+			}else{
+				d.resolve(); 
+			}
+
+			$('.' + _config.posMove).removeClass(_config.posMove);
+			$('.' + _config.selTile).removeClass(_config.selTile);
+
+			ele.addClass(_config.selTile);
+
+			if(moves){
+				$(genMoveSelector(moves)).addClass(_config.posMove);
+			}
+			return d; 
 		}
 
 
@@ -227,11 +257,47 @@
 
 	}
 
+	function foolsMateTest(game){
+		//game.resetGame();
+
+		game.tileClicked("#f2")
+		.then(function(){
+			console.log('');
+			return game.tileClicked("#f3");
+		}).then(function(def){
+			 console.log('1');
+			return game.tileClicked("#e7");
+		}).then(function(def){
+			 console.log('2');
+			return game.tileClicked("#e6");
+		}).then(function(def){
+			console.log('3');
+			return game.tileClicked("#g2");
+		}).then(function(def){
+			console.log('4');
+			return game.tileClicked("#g4");
+		}).then(function(def){
+			console.log('5');
+			return game.tileClicked("#d8");
+		}).then(function(def){
+			console.log('6');
+			return game.tileClicked("#h4");
+		}).then(function(){
+			if(!game.isGameOver){
+				throw "Game is not over";
+			}
+		});
+
+	}
+
 	$(function(){
 		var myGame = new game(); 
 		myGame.render(); 
 
 		$('#reset').click(myGame.resetGame);
+		$('#testFools').click(function(){
+			foolsMateTest(myGame);
+		});
 	});
 
 })(jQuery);
