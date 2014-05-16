@@ -1,6 +1,18 @@
 
 (function($, undefined){
 
+	//TODO: 
+	//1. Be able to indicate to the user when the current player is in Check
+	//2. Be able to draw the chess board when the game is over (not sure what is meant here)
+	//
+	//Other possible features:
+	//Keyboard/Touch access
+	//Dynamic resizing based on screen size
+	//
+	//Outstanding issues: 
+	//Error handling.
+	//Why move list is incorrect for certain pieces? 
+	//Other pieces randomly moving on their own. 
 	function game(){
 
 		var _config = {
